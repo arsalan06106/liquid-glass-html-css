@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liquid Glass Design Showcase v2</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;500;700&display=swap">
+    <style>
+        /* =========================================
+           1. CORE VARIABLES & SETUP
+           ========================================= */
+        :root {
+            /* Physics of the Glass Material */
+            --glass-base: #bbbbbc;
+            --glass-highlight: #fff;
+            --glass-shadow: #000;
+            --glass-reflex-opacity-light: 1;
+            --glass-reflex-opacity-dark: 1;
+            --glass-saturation: 150%;
+            
+            /* Global Font */
+            font-family: "DM Sans", sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            width: 100vw;
+            min-height: 100vh;
+        }
+
+        /* =========================================
+           2. THE LIQUID GLASS ENGINE
+           ========================================= */
+        .liquid-glass {
+            background-color: color-mix(in srgb, var(--glass-base) 12%, transparent);
+            backdrop-filter: blur(8px) url(#glass-blur) saturate(var(--glass-saturation));
+            -webkit-backdrop-filter: blur(8px) saturate(var(--glass-saturation));
+            
+            box-shadow:
+                inset 0 0 0 1px color-mix(in srgb, var(--glass-highlight) calc(var(--glass-reflex-opacity-light) * 10%), transparent),
+                inset 1.8px 3px 0px -2px color-mix(in srgb, var(--glass-highlight) calc(var(--glass-reflex-opacity-light) * 90%), transparent),
+                inset -2px -2px 0px -2px color-mix(in srgb, var(--glass-highlight) calc(var(--glass-reflex-opacity-light) * 80%), transparent),
+                inset -3px -8px 1px -6px color-mix(in srgb, var(--glass-highlight) calc(var(--glass-reflex-opacity-light) * 60%), transparent),
+                inset -0.3px -1px 4px 0px color-mix(in srgb, var(--glass-shadow) calc(var(--glass-reflex-opacity-dark) * 12%), transparent),
+                inset -1.5px 2.5px 0px -2px color-mix(in srgb, var(--glass-shadow) calc(var(--glass-reflex-opacity-dark) * 20%), transparent),
+                0px 1px 5px 0px color-mix(in srgb, var(--glass-shadow) calc(var(--glass-reflex-opacity-dark) * 10%), transparent),
+                0px 6px 16px 0px color-mix(in srgb, var(--glass-shadow) calc(var(--glass-reflex-opacity-dark) * 8%), transparent);
+                
+            border: none;
+        }
+
+        /* =========================================
+           3. THEMES
+           ========================================= */
+        .showcase-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 60px;
+            padding: 40px;
+        }
+
+        .theme-light {
+            background-color: #e8e8e9;
+            color: #222244;
+            --content-color: #222244;
+        }
+
+        .theme-dark {
+            background-color: #1b1b1d;
+            color: #e1e1e1;
+            --glass-reflex-opacity-light: 0.8; 
+            --glass-reflex-opacity-dark: 2; 
+            --content-color: #e1e1e1;
+        }
+
+        /* =========================================
+           4. COMPONENT STYLING
+           ========================================= */
+        
+        /* -- Menu -- */
+        .menu-bar {
+            padding: 12px;
+            border-radius: 999px;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        /* -- Buttons -- */
+        .btn {
+            appearance: none;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 500;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 28px;
+            border-radius: 99em;
+            color: var(--content-color);
+            transform: scale(1);
+        }
+        .btn:hover { transform: scale(1.05); background-color: color-mix(in srgb, var(--glass-base) 30%, transparent); }
+        .btn:active { transform: scale(0.95); }
+        .btn.icon-only { padding: 0; width: 52px; height: 52px; justify-content: center; border-radius: 50%; }
+
+        /* -- UPDATED TOAST NOTIFICATION -- */
+        .toast {
+            /* 1. Fully Round */
+            border-radius: 99em;
+            
+            /* 2. Enhanced Spacing */
+            padding: 12px 16px 12px 24px; /* Less padding on right for the button */
+            gap: 20px;
+            
+            display: flex;
+            align-items: center;
+            color: var(--content-color);
+            min-width: 340px;
+        }
+
+        /* Icon Container */
+        .toast-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: color-mix(in srgb, var(--content-color) 10%, transparent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        /* Text Group */
+        .toast-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            flex-grow: 1; /* Pushes action to the right */
+        }
+        .toast-title {
+            font-weight: 600;
+            font-size: 14px;
+            line-height: 1.2;
+        }
+        .toast-meta {
+            font-size: 12px;
+            opacity: 0.6;
+        }
+
+        /* Action Button */
+        .toast-action {
+            appearance: none;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 99em;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--content-color);
+            background-color: color-mix(in srgb, var(--content-color) 5%, transparent);
+            transition: background-color 0.2s;
+        }
+        .toast-action:hover {
+            background-color: color-mix(in srgb, var(--content-color) 15%, transparent);
+        }
+
+        /* -- Decoration -- */
+        h2 { opacity: 0.5; text-transform: uppercase; font-size: 14px; margin-bottom: 20px; letter-spacing: 1px; font-weight: 700;}
+        .component-group { display: flex; flex-direction: column; align-items: center; gap: 40px; }
+
+    </style>
+</head>
+<body>
+
+    <svg style="position: absolute; width: 0; height: 0; pointer-events: none;">
+      <filter id="glass-blur" x="0" y="0" width="100%" height="100%" filterUnits="objectBoundingBox">
+        <feTurbulence type="fractalNoise" baseFrequency="0.003 0.007" numOctaves="1" result="turbulence" />
+        <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="20" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+    </svg>
+
+    <section class="showcase-section theme-light">
+        <div class="component-group">
+            <h2>Light Theme</h2>
+
+            <div class="menu-bar liquid-glass">
+                <button class="btn liquid-glass icon-only"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></button>
+                <button class="btn liquid-glass">Capture</button>
+                <button class="btn liquid-glass">Export</button>
+            </div>
+
+            <div class="toast liquid-glass">
+                <div class="toast-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </div>
+                <div class="toast-content">
+                    <span class="toast-title">Image Saved</span>
+                    <span class="toast-meta">screenshot_001.png (2.4MB)</span>
+                </div>
+                <button class="toast-action">Undo</button>
+            </div>
+
+            <div style="display:flex; gap: 16px;">
+                <button class="btn liquid-glass">Cancel</button>
+                <button class="btn liquid-glass" style="color: #0052f5;">Confirm</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="showcase-section theme-dark">
+        <div class="component-group">
+            <h2>Dark Theme</h2>
+
+            <div class="menu-bar liquid-glass">
+                <button class="btn liquid-glass icon-only"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></button>
+                <button class="btn liquid-glass">Capture</button>
+                <button class="btn liquid-glass">Export</button>
+            </div>
+
+            <div class="toast liquid-glass">
+                <div class="toast-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </div>
+                <div class="toast-content">
+                    <span class="toast-title">Image Saved</span>
+                    <span class="toast-meta">screenshot_001.png (2.4MB)</span>
+                </div>
+                <button class="toast-action">Undo</button>
+            </div>
+
+            <div style="display:flex; gap: 16px;">
+                <button class="btn liquid-glass">Cancel</button>
+                <button class="btn liquid-glass" style="color: #4da3ff;">Confirm</button>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>
