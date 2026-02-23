@@ -39,7 +39,3 @@ For the best visual fidelity, use a Chromium-based browser (Chrome, Edge, Arc) o
 - HTML5
 - CSS3 (`backdrop-filter`, `color-mix()`, CSS custom properties)
 - Inline SVG filter (`feTurbulence` + `feDisplacementMap`)
-
-## License
-
-This project is licensed under the Apache License 2.0 — see the [LICENSE](LICENSE) file for details.
